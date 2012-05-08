@@ -1,0 +1,37 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+require 'methadone'
+require 'clean_bsmart_catalog'
+
+class App
+  include Methadone::Main
+  include Methadone::CLILogging
+
+  main do
+    xsl = File.expand_path('../lib/stock.xsl', File.dirname(__FILE__))
+    xml = File.read(options[:catalog])
+    utf8 = xml.encode("UTF-8", "us-ascii", invalid: :replace, undef: :replace)
+
+    klass = if RUBY_PLATFORM == 'java'
+              require_relative '../lib/clean_bsmart_catalog/java_transformer'
+              CleanBsmartCatalog::JavaTransformer
+            else
+              require_relative '../lib/clean_bsmart_catalog/mri_transformer'
+              CleanBsmartCatalog::MRITransformer
+            end
+
+    transformer = klass.new(utf8, xsl)
+    transformer.transform
+    puts transformer.output
+  end
+
+  options[:catalog] = 'C:\bsmart\data\DB1SC583.xml'
+  on('-c CATALOG', '--catalog', 'Specify XML catalog input file.')
+
+  version CleanBsmartCatalog::VERSION
+
+  use_log_level_option
+
+  go!
+end
