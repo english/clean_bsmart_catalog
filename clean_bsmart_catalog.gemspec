@@ -17,9 +17,11 @@ Gem::Specification.new do |gem|
   gem.name          = "clean_bsmart_catalog"
   gem.require_paths = ["lib"]
   gem.version       = CleanBsmartCatalog::VERSION
+
   gem.add_development_dependency('aruba')
   gem.add_development_dependency('rspec')
   gem.add_development_dependency('rake', '~> 0.9.2')
+
   gem.add_dependency('methadone', '~> 1.1.0')
   gem.add_dependency('activesupport', '~> 3.2.3')
   gem.add_dependency('nokogiri', '~> 1.5.2')
